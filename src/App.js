@@ -1,10 +1,10 @@
 import React from 'react'
-// import * as BooksAPI from './BooksAPI'
 import './App.css'
 import './Components/SearchBooks'
 import SearchBooks from './Components/SearchBooks'
 import ListBooks from './Components/ListBooks'
 import { Route, Link } from 'react-router-dom'
+import * as BooksAPI from './BooksAPI.js'
 
 class BooksApp extends React.Component {
   state = {
@@ -14,16 +14,34 @@ class BooksApp extends React.Component {
      * users can use the browser's back and forward buttons to navigate between
      * pages, as well as provide a good URL they can bookmark and share.
      */
-
-    currentlyReading: [],
-    wantToRead: [],
-    read: [],
+    books: []
   }
 
 
-  onShelfChange = (shelf,bookID) =>{
-    console.log(shelf)
-    console.log(bookID)
+  componentDidMount(){
+    BooksAPI.getAll()
+    .then((book)=>{
+      this.setState({
+        books : book
+      })
+    })
+  }
+
+
+  onShelfChange = (shelf, bookID) => {
+    // console.log(shelf)
+    // console.log(bookID) 
+    this.getBook(shelf, bookID)
+  }
+
+  getBook = (shelf, bookID) => {
+    BooksAPI.get(bookID)
+      .then((book) => {
+        console.log(book)
+        this.setState((currState) => {
+          this.state[shelf] = currState[shelf].concat([book])
+        })
+      })
   }
 
   render() {
@@ -41,16 +59,16 @@ class BooksApp extends React.Component {
                   <div className="bookshelf">
                     <h2 className="bookshelf-title">Currently Reading</h2>
                     <div className="bookshelf-books">
-                      <ol className="books-grid">
-                        <ListBooks bookList={this.state.currentlyReading} />
-                      </ol>
+
+                      <ListBooks bookList={this.state.books.filter((book)=> book.shelf === 'currentlyReading')} />
+
                     </div>
                   </div>
                   <div className="bookshelf">
                     <h2 className="bookshelf-title">Want to Read</h2>
                     <div className="bookshelf-books">
                       <ol className="books-grid">
-                        <ListBooks bookList={this.state.wantToRead} />
+                        <ListBooks bookList={this.state.books.filter((book)=> book.shelf === 'wantToRead')} />
                       </ol>
                     </div>
                   </div>
@@ -58,7 +76,7 @@ class BooksApp extends React.Component {
                     <h2 className="bookshelf-title">Read</h2>
                     <div className="bookshelf-books">
                       <ol className="books-grid">
-                        <ListBooks bookList={this.state.read} />
+                        <ListBooks bookList={this.state.books.filter((book)=> book.shelf === 'read')} />
                       </ol>
                     </div>
                   </div>
@@ -70,7 +88,7 @@ class BooksApp extends React.Component {
             </div>
           </div>
         }} />
-        <Route exact path='/search' render={({history}) => <SearchBooks onShelfChange = {this.onShelfChange} />} />
+        <Route exact path='/search' render={({ history }) => <SearchBooks onShelfChange={this.onShelfChange} />} />
       </div>
     )
   }
