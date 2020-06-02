@@ -4,7 +4,7 @@ class ListBooks extends Component {
     render() {
         return (
             <div>
-                {this.props.currentlyReading.map((book) => {
+                {this.props.bookList.map((book) => {
                     return <li>
                         <div className="book">
                             <div className="book-top">
