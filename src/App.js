@@ -28,26 +28,23 @@ class BooksApp extends React.Component {
   }
 
 
-  onShelfChange = (shelf, bookID) => {
-    // console.log(shelf)
-    // console.log(bookID) 
-    this.getBook(shelf, bookID)
+  onShelfChange = (shelf, book) => { 
+    console.log(book.shelf + " " + shelf)
+    book.shelf = shelf
+    BooksAPI.update(book , shelf)
+    .then(()=>{
+      this.setState((currState) => ({
+        books : currState.books.map((b) => b.id === book.id ? book : b)
+      }))
+    })
+    
   }
 
-  getBook = (shelf, bookID) => {
-    BooksAPI.get(bookID)
-      .then((book) => {
-        console.log(book)
-        this.setState((currState) => {
-          this.state[shelf] = currState[shelf].concat([book])
-        })
-      })
-  }
 
   render() {
+    console.log(this.state.books)
     return (
       <div className="app">
-
         <Route exact path="/" render={() => {
           return <div>
             <div className="list-books">
@@ -60,7 +57,7 @@ class BooksApp extends React.Component {
                     <h2 className="bookshelf-title">Currently Reading</h2>
                     <div className="bookshelf-books">
 
-                      <ListBooks bookList={this.state.books.filter((book)=> book.shelf === 'currentlyReading')} />
+                      <ListBooks onShelfChange={this.onShelfChange} bookList={this.state.books.filter((book)=> book.shelf === 'currentlyReading')} />
 
                     </div>
                   </div>
@@ -68,7 +65,7 @@ class BooksApp extends React.Component {
                     <h2 className="bookshelf-title">Want to Read</h2>
                     <div className="bookshelf-books">
                       <ol className="books-grid">
-                        <ListBooks bookList={this.state.books.filter((book)=> book.shelf === 'wantToRead')} />
+                        <ListBooks onShelfChange={this.onShelfChange} bookList={this.state.books.filter((book)=> book.shelf === 'wantToRead')} />
                       </ol>
                     </div>
                   </div>
@@ -76,7 +73,7 @@ class BooksApp extends React.Component {
                     <h2 className="bookshelf-title">Read</h2>
                     <div className="bookshelf-books">
                       <ol className="books-grid">
-                        <ListBooks bookList={this.state.books.filter((book)=> book.shelf === 'read')} />
+                        <ListBooks onShelfChange={this.onShelfChange} bookList={this.state.books.filter((book)=> book.shelf === 'read')} />
                       </ol>
                     </div>
                   </div>
@@ -88,7 +85,7 @@ class BooksApp extends React.Component {
             </div>
           </div>
         }} />
-        <Route exact path='/search' render={({ history }) => <SearchBooks onShelfChange={this.onShelfChange} />} />
+        <Route exact path='/search' render={({ history }) => <SearchBooks books= {this.state.books} onShelfChange={this.onShelfChange} />} />
       </div>
     )
   }

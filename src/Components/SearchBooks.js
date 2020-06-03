@@ -9,22 +9,21 @@ class SearchBooks extends Component {
     }
 
 
-    onChangeHandle = (e,bookID) =>{
-        this.props.onShelfChange(e.target.value , bookID )
-        // console.log(e.target.value)
-        // console.log(key)
+    onChangeHandle = (e, book) => {
+        this.props.onShelfChange(e.target.value, book)
     }
 
     onInputChange = e => {
         BooksAPI.search(e.target.value.trim())
             .then((book) => {
-                ((book) && (book.length > 0) ? 
-                    this.setState({ searchedList: book }) : 
+                ((book) && (book.length > 0) ?
+                    this.setState({ searchedList: book }) :
                     this.setState({ searchedList: [] }))
             })
 
     }
     render() {
+        
         return (
             <div>
                 <div className="search-books">
@@ -36,24 +35,30 @@ class SearchBooks extends Component {
                     </div>
                     <div className="search-books-results">
                         <ol className="books-grid">
+                        {/* {console.log(this.state.searchedList)} */}
                             {this.state.searchedList.map((book) => {
-                                    return <li key = {book.id}><div className="book">
-                                        <div className="book-top">
-                                            <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url(${book.imageLinks.thumbnail})` }}></div>
-                                            <div className="book-shelf-changer">
-                                                <select value = {book.shelf}  onChange = {(evt) => this.onChangeHandle(evt, book.id)}>
-                                                    <option value="move" disabled>Move to...</option>
-                                                    <option value="currentlyReading">Currently Reading</option>
-                                                    <option value="wantToRead">Want to Read</option>
-                                                    <option value="read">Read</option>
-                                                    <option value="none">None</option>
-                                                </select>
-                                            </div>
+                                // {//console.log(this.props.books)}
+                                {const bookInShelf = this.props.books.find(b => book.id === b.id);
+                                (bookInShelf === undefined) ? book.shelf = 'none': book.shelf = bookInShelf.shelf
+                                }
+                                return <li key={book.id}><div className="book">
+                                    <div className="book-top">
+                                        <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url(${book.imageLinks.thumbnail})` }}></div>
+                                        <div className="book-shelf-changer">
+                                            <select defaultValue={book.shelf} onChange={(evt) => this.onChangeHandle(evt, book)}>
+                                                <option value="move" disabled>Move to...</option>
+                                                <option value="currentlyReading">Currently Reading</option>
+                                                <option value="wantToRead">Want to Read</option>
+                                                <option value="read">Read</option>
+                                                <option value="none">None</option>
+                                            </select>
                                         </div>
-                                        <div className="book-title">{book.title}</div>
-                                        <div className="book-authors">{book.authors}</div>
-                                    </div></li>
-                                })
+                                    </div>
+                                    <div className="book-title">{book.title}</div>
+                                    <div className="book-authors">{(book.authors) && book.authors}</div>
+                                    
+                                </div></li>
+                            })
                             }
                         </ol>
                     </div>
