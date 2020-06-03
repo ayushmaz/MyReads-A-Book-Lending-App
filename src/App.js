@@ -29,8 +29,11 @@ class BooksApp extends React.Component {
 
 
   onShelfChange = (shelf, book) => { 
-    console.log(book.shelf + " " + shelf)
+    //console.log(book.shelf + " " + shelf)
     book.shelf = shelf
+    if(this.state.books.indexOf(book) < 0){
+      this.state.books.push(book)
+    }
     BooksAPI.update(book , shelf)
     .then(()=>{
       this.setState((currState) => ({
