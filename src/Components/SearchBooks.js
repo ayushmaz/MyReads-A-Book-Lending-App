@@ -36,10 +36,8 @@ class SearchBooks extends Component {
                     </div>
                     <div className="search-books-results">
                         <ol className="books-grid">
-                        {/* {console.log(this.state.searchedList)} */}
                             {this.state.searchedList.map((book) => {
-                                // {//console.log(this.props.books)}
-                                // console.log(book)
+                                
                                 {const bookInShelf = this.props.books.find(b => book.id === b.id);
                                 (bookInShelf === undefined) ? book.shelf = 'none': book.shelf = bookInShelf.shelf
                                 }
