@@ -24,13 +24,11 @@ class BooksApp extends React.Component {
 
   onShelfChange = (shelf, book) => { 
     book.shelf = shelf
-    if(this.state.books.indexOf(book) < 0){
-      this.state.books.push(book)
-    }
     BooksAPI.update(book , shelf)
     .then(()=>{
       this.setState((currState) => ({
-        books : currState.books.map((b) => b.id === book.id ? book : b)
+        books : (!this.state.books.some(entry=> entry.id === book.id))?currState.books.concat([book]).map((b) => b.id === book.id ? book : b):
+        currState.books.map((b) => b.id === book.id ? book : b)
       }))
     })
     
