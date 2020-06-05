@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/MyReads-A-Book-Lending-App/precache-manifest.a8aea847be44fde2c6d0aab026ee1659.js"
+  "/MyReads-A-Book-Lending-App/precache-manifest.d5ca1b1c52a42702d383ac1202a3a7a3.js"
 );
 
 workbox.clientsClaim();
